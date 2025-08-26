@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h2><i class="fas fa-cogs"></i> Admin Panel</h2>
+        </div>
+        <div class="sidebar-menu">
+          <div class="menu-item active" data-section="projects">
+            <i class="fas fa-project-diagram"></i>
+            <span>Projects</span>
+          </div>
+          <div class="menu-item" data-section="skills">
+            <i class="fas fa-tools"></i>
+            <span>Skills</span>
+          </div>
+
+          <div class="menu-item" data-section="certifications">
+            <i class="fas fa-certificate"></i>
+            <span>Certifications</span>
+          </div>
+          <div class="menu-item" data-section="education">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Education</span>
+          </div>
+          <div class="menu-item" data-section="resume">
+            <i class="fas fa-file-alt"></i>
+            <span>Resume</span>
+          </div>
+          <div class="menu-item" data-section="messages">
+            <i class="fas fa-envelope"></i>
+            <span>Messages</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="header">
+          <button class="menu-toggle">
+            <i class="fas fa-bars"></i>
+          </button>
+          <h1>Admin Dashboard</h1>
+          <button class="logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i>
+            Logout
+          </button>
+        </div>
+
+        <!-- Projects Section -->
+        <section id="projects-section" class="content-section">
+          <div class="card">
+            <div class="card-header">
+              <h2><i class="fas fa-project-diagram"></i> Manage Projects</h2>
+            </div>
+            <div class="card-body">
+              <form id="project-form">
+                <div class="form-group">
+                  <label for="title">Project Title</label>
+                  <input
+                    type="text"
+                    id="title"
+                    class="form-control"
+                    placeholder="Project Title"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="description">Description</label>
+                  <input
+                    type="text"
+                    id="description"
+                    class="form-control"
+                    placeholder="Description"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="url">Project URL</label>
+                  <input
+                    type="text"
+                    id="url"
+                    class="form-control"
+                    placeholder="GitHub URL"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="image">Image URL</label>
+                  <input
+                    type="text"
+                    id="image"
+                    class="form-control"
+                    placeholder="Image URL"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="techStack">Tech Stack (comma-separated)</label>
+                  <input
+                    type="text"
+                    id="techStack"
+                    class="form-control"
+                    placeholder="e.g., React, Node.js, Spring Boot"
+                  />
+                </div>
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-plus"></i> Add Project
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2><i class="fas fa-list"></i> Projects List</h2>
+            </div>
+            <div class="card-body">
+              <div id="projects-list" class="items-list">
+                <div class="spinner"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section
+          id="skills-section"
+          class="content-section"
+          style="display: none"
+        >
+          <div class="card">
+            <div class="card-header">
+              <h2><i class="fas fa-tools"></i> Manage Skills</h2>
+            </div>
+            <div class="card-body">
+              <form id="skill-form">
+                <div class="form-group">
+                  <label for="skillName">Skill Name</label>
+                  <input
+                    type="text"
+                    id="skillName"
+                    class="form-control"
+                    placeholder="Skill Name"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="level">Skill Level</label>
+                  <select id="level" class="form-control" required>
+                    <option value="">Select Level</option>
+                    <option value="Beginner">Beginner</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Expert">Expert</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="category">Skill Category</label>
+                  <select id="category" class="form-control" required>
+                    <option value="">Select Category</option>
+                    <option value="LANGUAGE">LANGUAGE</option>
+                    <option value="FRAMEWORK">FRAMEWORK</option>
+                    <option value="DATABASE">DATABASE</option>
+                    <option value="TOOL">TOOL</option>
+                    <option value="CLOUD">CLOUD</option>
+                    <option value="OTHER">OTHER</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-plus"></i> Add Skill
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2><i class="fas fa-list"></i> Skills List</h2>
+            </div>
+            <div class="card-body">
+              <div id="skills-list" class="items-list">
+                <div class="spinner"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- New section for Certifications -->
+        <section
+          id="certifications-section"
+          class="content-section"
+          style="display: none"
+        >
+          <div class="card">
+            <div class="card-header">
+              <h2><i class="fas fa-certificate"></i> Manage Certifications</h2>
+            </div>
+            <div class="card-body">
+              <form id="certification-form">
+                <div class="form-group">
+                  <label for="certName">Certification Name</label>
+                  <input
+                    type="text"
+                    id="certName"
+                    class="form-control"
+                    placeholder="Certification Name"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="issuingOrganization">Issuing Organization</label>
+                  <input
+                    type="text"
+                    id="issuingOrganization"
+                    class="form-control"
+                    placeholder="Issuing Organization"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="issueDate">Issue Date</label>
+                  <input
+                    type="date"
+                    id="issueDate"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="expiryDate">Expiry Date (Optional)</label>
+                  <input type="date" id="expiryDate" class="form-control" />
+                </div>
+                <div class="form-group">
+                  <label for="certUrl">Credential URL (Optional)</label>
+                  <input
+                    type="url"
+                    id="certUrl"
+                    class="form-control"
+                    placeholder="https://example.com"
+                  />
+                </div>
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-plus"></i> Add Certification
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2><i class="fas fa-list"></i> Certifications List</h2>
+            </div>
+            <div class="card-body">
+              <div id="certifications-list" class="items-list">
+                <div class="spinner"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- New section for Education -->
+        <section
+          id="education-section"
+          class="content-section"
+          style="display: none"
+        >
+          <div class="card">
+            <div class="card-header">
+              <h2><i class="fas fa-graduation-cap"></i> Manage Education</h2>
+            </div>
+            <div class="card-body">
+              <form id="education-form">
+                <div class="form-group">
+                  <label for="institution">Institution</label>
+                  <input
+                    type="text"
+                    id="institution"
+                    class="form-control"
+                    placeholder="Institution Name"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="degree">Degree</label>
+                  <input
+                    type="text"
+                    id="degree"
+                    class="form-control"
+                    placeholder="Degree Name"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="fieldOfStudy">Field of Study (Optional)</label>
+                  <input
+                    type="text"
+                    id="fieldOfStudy"
+                    class="form-control"
+                    placeholder="e.g., Computer Science"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="startDate">Start Date</label>
+                  <input
+                    type="date"
+                    id="startDate"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="endDate">End Date (Optional)</label>
+                  <input type="date" id="endDate" class="form-control" />
+                </div>
+                <div class="form-group">
+                  <label for="grade">Grade (Optional)</label>
+                  <input
+                    type="text"
+                    id="grade"
+                    class="form-control"
+                    placeholder="e.g., 4.0 GPA"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="description">Description (Optional)</label>
+                  <textarea
+                    id="description"
+                    class="form-control"
+                    rows="3"
+                    placeholder="e.g., Relevant coursework, honors, or activities"
+                  ></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-plus"></i> Add Education
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2><i class="fas fa-list"></i> Education List</h2>
+            </div>
+            <div class="card-body">
+              <div id="education-list" class="items-list">
+                <div class="spinner"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- New section for Resume -->
+        <
+        <section
+          id="resume-section"
+          class="content-section"
+          style="display: none"
+        >
+          <div class="card">
+            <div class="card-header">
+              <h2><i class="fas fa-file-alt"></i> Manage Resume</h2>
+            </div>
+            <div class="card-body">
+              <form id="resume-form">
+                <div class="form-group">
+                  <label for="resumeUrl">Select Resume (PDF Only)</label>
+                  <input
+                    type="file"
+                    id="resumeUrl"
+                    class="form-control"
+                    accept=".pdf"
+                    required
+                  />
+                </div>
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-upload"></i> Upload/Update Resume
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2><i class="fas fa-list"></i> Current Resume</h2>
+            </div>
+            <div class="card-body">
+              <div id="resume-list" class="items-list">
+                <div class="spinner"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Messages Section -->
+        <section
+          id="messages-section"
+          class="content-section"
+          style="display: none"
+        >
+          <div class="card">
+            <div class="card-header">
+              <h2><i class="fas fa-envelope"></i> Messages</h2>
+            </div>
+            <div class="card-body">
+              <div id="messages-list" class="items-list">
+                <div class="spinner"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+  </body>
+</html>
