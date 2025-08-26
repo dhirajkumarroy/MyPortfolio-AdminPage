@@ -305,6 +305,124 @@
   </div>
 
   <script>
+    // // const API_BASE = "http://localhost:8080/api/auth";
+    // const API_BASE = "https://dhiraj-my-portfolio-api.onrender.com/api/auth";
+
+    // // Create particles for background
+    // function createParticles() {
+    //   const container = document.getElementById('particles');
+    //   const particleCount = 20;
+      
+    //   for (let i = 0; i < particleCount; i++) {
+    //     const particle = document.createElement('div');
+    //     particle.classList.add('particle');
+        
+    //     // Random size between 2 and 5 pixels
+    //     const size = Math.random() * 3 + 2;
+    //     particle.style.width = `${size}px`;
+    //     particle.style.height = `${size}px`;
+        
+    //     // Random position
+    //     particle.style.left = `${Math.random() * 100}%`;
+    //     particle.style.top = `${Math.random() * 100}%`;
+        
+    //     // Random animation delay and duration
+    //     particle.style.animationDelay = `${Math.random() * 15}s`;
+    //     particle.style.animationDuration = `${15 + Math.random() * 10}s`;
+        
+    //     container.appendChild(particle);
+    //   }
+    // }
+
+    // // Handle form submission
+    // document.getElementById("login-form").addEventListener("submit", async (e) => {
+    //   e.preventDefault();
+
+    //   const loginButton = document.getElementById("login-button");
+    //   const loginContainer = document.getElementById("login-container");
+    //   const messageElement = document.getElementById("login-message");
+      
+    //   // Get form values
+    //   const creds = {
+    //     username: document.getElementById("username").value,
+    //     password: document.getElementById("password").value
+    //   };
+
+    //   // Show loading state
+    //   loginButton.disabled = true;
+    //   loginButton.textContent = "Logging in...";
+    //   loginContainer.classList.add("loading");
+    //   messageElement.textContent = "";
+    //   messageElement.className = "";
+
+    //   try {
+    //     const res = await fetch(`${API_BASE}/login`, {
+    //       method: "POST",
+    //       headers: { "Content-Type": "application/json" },
+    //       body: JSON.stringify(creds)
+    //     });
+
+    //     if (!res.ok) {
+    //       throw new Error("Invalid username or password");
+    //     }
+
+    //     const data = await res.json();
+        
+    //     // Save JWT in localStorage for later use
+    //     localStorage.setItem("token", data.token);
+
+    //     // Show success message
+    //     messageElement.textContent = "✅ Login successful! Redirecting...";
+    //     messageElement.className = "success";
+
+    //     // Redirect to admin dashboard after a brief delay
+    //     setTimeout(() => {
+    //       window.location.href = "admin.html";
+    //     }, 1000);
+    //   } catch (err) {
+    //     console.error("Login failed", err);
+        
+    //     // Show error message
+    //     messageElement.textContent = "❌ " + err.message;
+    //     messageElement.className = "error";
+        
+    //     // Shake animation for error
+    //     loginContainer.style.animation = "shake 0.5s";
+    //     setTimeout(() => {
+    //       loginContainer.style.animation = "";
+    //     }, 500);
+    //   } finally {
+    //     // Reset button state
+    //     loginButton.disabled = false;
+    //     loginButton.textContent = "Login";
+    //     loginContainer.classList.remove("loading");
+    //   }
+    // });
+
+    // // Add shake animation for errors
+    // const style = document.createElement('style');
+    // style.textContent = `
+    //   @keyframes shake {
+    //     0%, 100% { transform: translateX(0); }
+    //     10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+    //     20%, 40%, 60%, 80% { transform: translateX(10px); }
+    //   }
+    // `;
+    // document.head.appendChild(style);
+
+    // // Initialize the page
+    // window.addEventListener('DOMContentLoaded', () => {
+    //   createParticles();
+      
+    //   // Check if user is already logged in
+    //   const token = localStorage.getItem("token");
+    //   if (token) {
+    //     // Optional: Verify token is still valid
+    //     window.location.href = "admin.html";
+    //   }
+    // });
+
+
     // const API_BASE = "http://localhost:8080/api/auth";
     const API_BASE = "https://dhiraj-my-portfolio-api.onrender.com/api/auth";
 
@@ -421,6 +539,7 @@
         window.location.href = "admin.html";
       }
     });
+
   </script>
 </body>
 </html>
