@@ -1,4 +1,5 @@
-// const API_BASE = "http://localhost:8080/api";
+
+// const API_BASE = "https://dhiraj-my-portfolio-api.onrender.com/api";
 
 // // 🔑 Add JWT automatically
 // function getAuthHeaders() {
@@ -830,7 +831,7 @@
 //         <div class="item-info">
 //           <h3>Current Resume</h3>
 //           <p><b>File ID:</b> ${resume.id}</p>
-//           <p><a href="${resume.url}" target="_blank">View Resume</a></p>
+//           <p><a href="${API_BASE}/resumes/download/${resume.id}" target="_blank">View Resume</a></p>
 //         </div>
 //         <div class="item-actions">
 //           <button class="btn btn-danger" onclick="deleteResume(${resume.id})">
@@ -972,15 +973,16 @@
 // };
 
 
-const API_BASE = "http://localhost:8080/api";
+const API_BASE = "https://dhiraj-my-portfolio-api.onrender.com/api";
 
 // 🔑 Add JWT automatically
 function getAuthHeaders() {
   const token = localStorage.getItem("token");
   if (!token) {
+    // Alert is a bad practice in modern JS, but for a simple admin panel it's ok
     alert("Unauthorized! Please login again.");
     window.location.href = "login.html";
-    return {}; // Return empty object to prevent further errors
+    return {};
   }
   return {
     "Content-Type": "application/json",
@@ -1017,7 +1019,10 @@ document.querySelectorAll(".menu-item").forEach((item) => {
     document
       .querySelectorAll(".content-section")
       .forEach((s) => (s.style.display = "none"));
-    document.getElementById(`${section}-section`).style.display = "block";
+    const targetSection = document.getElementById(`${section}-section`);
+    if (targetSection) {
+      targetSection.style.display = "block";
+    }
   });
 });
 
@@ -1026,8 +1031,7 @@ document.querySelectorAll(".menu-item").forEach((item) => {
 // =========================================================
 
 // 📂 Create Project
-document
-  .getElementById("project-form")
+document.getElementById("project-form")
   .addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -1042,7 +1046,6 @@ document
         .map((tech) => tech.trim()),
     };
 
-    // Show loading state
     const submitBtn = e.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
@@ -1072,6 +1075,7 @@ document
 // 📂 Fetch Projects
 async function loadProjects() {
   const list = document.getElementById("projects-list");
+  if (!list) return;
   list.innerHTML = '<div class="spinner"></div>';
 
   try {
@@ -1084,9 +1088,9 @@ async function loadProjects() {
     }
 
     const data = await res.json();
-    const projects = data.content || data;
+    const projects = data.content;
 
-    if (projects.length === 0) {
+    if (!projects || projects.length === 0) {
       list.innerHTML = `
             <div class="empty-state">
               <i class="fas fa-project-diagram"></i>
@@ -1110,19 +1114,11 @@ async function loadProjects() {
                     }
                   </div>
                   <div class="item-actions">
-                    <button class="btn btn-danger" onclick="deleteProject(${
-                      p.id
-                    })">
+                    <button class="btn btn-danger delete-project-btn" data-id="${p.id}">
                       <i class="fas fa-trash"></i>
                     </button>
-                    <button class="btn btn-warning" onclick="handleEditProject(${
-                      p.id
-                    }, '${p.title.replace(
-          /'/g,
-          "\\'"
-        )}', '${p.description.replace(/'/g, "\\'")}', '${
-          p.url ? p.url.replace(/'/g, "\\'") : ""
-        }')">
+                    <button class="btn btn-warning edit-project-btn" data-id="${p.id}"
+                     data-title="${p.title}" data-description="${p.description}" data-url="${p.url}">
                       <i class="fas fa-edit"></i>
                     </button>
                   </div>
@@ -1216,7 +1212,6 @@ document.getElementById("skill-form").addEventListener("submit", async (e) => {
     category: document.getElementById("category").value
   };
 
-  // Show loading state
   const submitBtn = e.target.querySelector('button[type="submit"]');
   const originalText = submitBtn.innerHTML;
   submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
@@ -1240,24 +1235,13 @@ document.getElementById("skill-form").addEventListener("submit", async (e) => {
   } finally {
     submitBtn.innerHTML = originalText;
     submitBtn.disabled = false;
-    
-    // Animate skill bars
-    const skillItem = document.querySelector(`.skill-item[data-id="${skill.id}"]`);
-    if (skillItem) {
-        const skillLevel = skillItem.getAttribute("data-level");
-        const skillProgress = skillItem.querySelector(".skill-progress");
-        if (skillProgress) {
-            setTimeout(() => {
-                skillProgress.style.width = skillLevel;
-            }, 300);
-        }
-    }
   }
 });
 
 // 🛠 Fetch Skills
 async function loadSkills() {
   const list = document.getElementById("skills-list");
+  if (!list) return;
   list.innerHTML = '<div class="spinner"></div>';
 
   try {
@@ -1269,9 +1253,10 @@ async function loadSkills() {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
 
-    const skills = await res.json();
+    const data = await res.json();
+    const skills = data.content;
 
-    if (skills.length === 0) {
+    if (!skills || skills.length === 0) {
       list.innerHTML = `
             <div class="empty-state">
               <i class="fas fa-tools"></i>
@@ -1290,17 +1275,10 @@ async function loadSkills() {
                     <p>Level: ${s.level}</p>
                   </div>
                   <div class="item-actions">
-                    <button class="btn btn-danger" onclick="deleteSkill(${
-                      s.id
-                    })">
+                    <button class="btn btn-danger delete-skill-btn" data-id="${s.id}">
                       <i class="fas fa-trash"></i>
                     </button>
-                    <button class="btn btn-warning" onclick="handleEditSkill(${
-                      s.id
-                    }, '${s.name.replace(/'/g, "\\'")}', '${s.level.replace(
-          /'/g,
-          "\\'"
-        )}')">
+                    <button class="btn btn-warning edit-skill-btn" data-id="${s.id}" data-name="${s.name}" data-level="${s.level}">
                       <i class="fas fa-edit"></i>
                     </button>
                   </div>
@@ -1392,7 +1370,6 @@ document.getElementById("certification-form").addEventListener("submit", async (
     url: document.getElementById("certUrl").value || null
   };
   
-  // Show loading state
   const submitBtn = e.target.querySelector('button[type="submit"]');
   const originalText = submitBtn.innerHTML;
   submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
@@ -1422,6 +1399,7 @@ document.getElementById("certification-form").addEventListener("submit", async (
 // 🎓 Fetch Certifications
 async function loadCertifications() {
   const list = document.getElementById("certifications-list");
+  if (!list) return;
   list.innerHTML = '<div class="spinner"></div>';
 
   try {
@@ -1434,9 +1412,9 @@ async function loadCertifications() {
     }
 
     const data = await res.json();
-    const certifications = data.content || data;
+    const certifications = data.content;
 
-    if (certifications.length === 0) {
+    if (!certifications || certifications.length === 0) {
       list.innerHTML = `
             <div class="empty-state">
               <i class="fas fa-certificate"></i>
@@ -1457,10 +1435,11 @@ async function loadCertifications() {
                     ${c.url ? `<p><a href="${c.url}" target="_blank">View Credential</a></p>` : ""}
                   </div>
                   <div class="item-actions">
-                    <button class="btn btn-danger" onclick="deleteCertification(${c.id})">
+                    <button class="btn btn-danger delete-cert-btn" data-id="${c.id}">
                       <i class="fas fa-trash"></i>
                     </button>
-                    <button class="btn btn-warning" onclick="handleEditCertification(${c.id}, '${c.name.replace(/'/g, "\\'")}', '${c.issuingOrganization.replace(/'/g, "\\'")}', '${c.issueDate}', '${c.expiryDate}', '${c.url ? c.url.replace(/'/g, "\\'") : ''}')">
+                    <button class="btn btn-warning edit-cert-btn" data-id="${c.id}" data-name="${c.name}"
+                      data-org="${c.issuingOrganization}" data-issue="${c.issueDate}" data-expiry="${c.expiryDate}" data-url="${c.url}">
                       <i class="fas fa-edit"></i>
                     </button>
                   </div>
@@ -1590,6 +1569,7 @@ document.getElementById("education-form").addEventListener("submit", async (e) =
 // 📚 Fetch Education
 async function loadEducation() {
   const list = document.getElementById("education-list");
+  if (!list) return;
   list.innerHTML = '<div class="spinner"></div>';
 
   try {
@@ -1602,9 +1582,9 @@ async function loadEducation() {
     }
 
     const data = await res.json();
-    const educationRecords = data.content || data;
+    const educationRecords = data.content;
 
-    if (educationRecords.length === 0) {
+    if (!educationRecords || educationRecords.length === 0) {
       list.innerHTML = `
             <div class="empty-state">
               <i class="fas fa-graduation-cap"></i>
@@ -1624,10 +1604,12 @@ async function loadEducation() {
                     <p>Dates: ${e.startDate} - ${e.endDate || 'Present'}</p>
                   </div>
                   <div class="item-actions">
-                    <button class="btn btn-danger" onclick="deleteEducation(${e.id})">
+                    <button class="btn btn-danger delete-edu-btn" data-id="${e.id}">
                       <i class="fas fa-trash"></i>
                     </button>
-                    <button class="btn btn-warning" onclick="handleEditEducation(${e.id}, '${e.institution.replace(/'/g, "\\'")}', '${e.degree.replace(/'/g, "\\'")}', '${e.fieldOfStudy || ''}', '${e.startDate}', '${e.endDate || ''}', '${e.grade || ''}', '${e.description || ''}')">
+                    <button class="btn btn-warning edit-edu-btn" data-id="${e.id}" data-institution="${e.institution}"
+                     data-degree="${e.degree}" data-field="${e.fieldOfStudy || ''}" data-start="${e.startDate}"
+                     data-end="${e.endDate || ''}" data-grade="${e.grade || ''}" data-description="${e.description || ''}">
                       <i class="fas fa-edit"></i>
                     </button>
                   </div>
@@ -1766,8 +1748,7 @@ document.getElementById("resume-form").addEventListener("submit", async (e) => {
 // 📄 Fetch Resume
 async function loadResume() {
   const list = document.getElementById("resume-list");
-  if (!list) return; // Add check to prevent error
-
+  if (!list) return;
   list.innerHTML = '<div class="spinner"></div>';
 
   try {
@@ -1783,9 +1764,9 @@ async function loadResume() {
     }
 
     const data = await res.json();
-    const resumes = data.content || data;
+    const resumes = data.content;
 
-    if (resumes.length === 0) {
+    if (!resumes || resumes.length === 0) {
       list.innerHTML = `
         <div class="empty-state">
           <i class="fas fa-file-alt"></i>
@@ -1796,7 +1777,6 @@ async function loadResume() {
       return;
     }
 
-    // Assuming you only manage a single resume file for simplicity
     const resume = resumes[0]; 
 
     list.innerHTML = `
@@ -1807,7 +1787,7 @@ async function loadResume() {
           <p><a href="${API_BASE}/resumes/download/${resume.id}" target="_blank">View Resume</a></p>
         </div>
         <div class="item-actions">
-          <button class="btn btn-danger" onclick="deleteResume(${resume.id})">
+          <button class="btn btn-danger delete-resume-btn" data-id="${resume.id}">
             <i class="fas fa-trash"></i>
           </button>
         </div>
@@ -1856,6 +1836,7 @@ async function deleteResume(id) {
 // 📩 Fetch Messages
 async function loadMessages() {
   const list = document.getElementById("messages-list");
+  if (!list) return;
   list.innerHTML = '<div class="spinner"></div>';
 
   try {
@@ -1869,7 +1850,7 @@ async function loadMessages() {
 
     const messages = await res.json();
 
-    if (messages.length === 0) {
+    if (!messages || messages.length === 0) {
       list.innerHTML = `
             <div class="empty-state">
               <i class="fas fa-envelope"></i>
@@ -1891,9 +1872,7 @@ async function loadMessages() {
                     ).toLocaleString()}</small>
                   </div>
                   <div class="item-actions">
-                    <button class="btn btn-danger" onclick="deleteMessage(${
-                      m.id
-                    })">
+                    <button class="btn btn-danger delete-msg-btn" data-id="${m.id}">
                       <i class="fas fa-trash"></i>
                     </button>
                   </div>
@@ -1935,12 +1914,100 @@ async function deleteMessage(id) {
 // PAGE LOAD
 // =========================================================
 
+// Event delegation for dynamically added buttons
+document.addEventListener('click', (e) => {
+    // Delete Project
+    if (e.target.closest('.delete-project-btn')) {
+        const id = e.target.closest('.delete-project-btn').getAttribute('data-id');
+        if (id) deleteProject(id);
+    }
+    // Edit Project
+    if (e.target.closest('.edit-project-btn')) {
+        const btn = e.target.closest('.edit-project-btn');
+        const id = btn.getAttribute('data-id');
+        const title = btn.getAttribute('data-title');
+        const description = btn.getAttribute('data-description');
+        const url = btn.getAttribute('data-url');
+        if (id) handleEditProject(id, title, description, url);
+    }
+    // Delete Skill
+    if (e.target.closest('.delete-skill-btn')) {
+        const id = e.target.closest('.delete-skill-btn').getAttribute('data-id');
+        if (id) deleteSkill(id);
+    }
+    // Edit Skill
+    if (e.target.closest('.edit-skill-btn')) {
+        const btn = e.target.closest('.edit-skill-btn');
+        const id = btn.getAttribute('data-id');
+        const name = btn.getAttribute('data-name');
+        const level = btn.getAttribute('data-level');
+        if (id) handleEditSkill(id, name, level);
+    }
+    // Delete Certification
+    if (e.target.closest('.delete-cert-btn')) {
+        const id = e.target.closest('.delete-cert-btn').getAttribute('data-id');
+        if (id) deleteCertification(id);
+    }
+    // Edit Certification
+    if (e.target.closest('.edit-cert-btn')) {
+        const btn = e.target.closest('.edit-cert-btn');
+        const id = btn.getAttribute('data-id');
+        const name = btn.getAttribute('data-name');
+        const org = btn.getAttribute('data-org');
+        const issue = btn.getAttribute('data-issue');
+        const expiry = btn.getAttribute('data-expiry');
+        const url = btn.getAttribute('data-url');
+        if (id) handleEditCertification(id, name, org, issue, expiry, url);
+    }
+    // Delete Education
+    if (e.target.closest('.delete-edu-btn')) {
+        const id = e.target.closest('.delete-edu-btn').getAttribute('data-id');
+        if (id) deleteEducation(id);
+    }
+    // Edit Education
+    if (e.target.closest('.edit-edu-btn')) {
+        const btn = e.target.closest('.edit-edu-btn');
+        const id = btn.getAttribute('data-id');
+        const institution = btn.getAttribute('data-institution');
+        const degree = btn.getAttribute('data-degree');
+        const field = btn.getAttribute('data-field');
+        const start = btn.getAttribute('data-start');
+        const end = btn.getAttribute('data-end');
+        const grade = btn.getAttribute('data-grade');
+        const description = btn.getAttribute('data-description');
+        if (id) handleEditEducation(id, institution, degree, field, start, end, grade, description);
+    }
+    // Delete Resume
+    if (e.target.closest('.delete-resume-btn')) {
+        const id = e.target.closest('.delete-resume-btn').getAttribute('data-id');
+        if (id) deleteResume(id);
+    }
+    // Delete Message
+    if (e.target.closest('.delete-msg-btn')) {
+        const id = e.target.closest('.delete-msg-btn').getAttribute('data-id');
+        if (id) deleteMessage(id);
+    }
+});
+
 // 🚀 Load everything when page opens
 window.onload = () => {
-  loadProjects();
-  loadSkills();
-  loadCertifications(); // Load certifications
-  loadEducation(); // Load education
-  loadResume(); // Load resume
-  loadMessages();
+  // Check if admin.html is the current page, if not, do nothing
+  if (window.location.pathname.includes('admin.html')) {
+    loadProjects();
+    loadSkills();
+    loadCertifications();
+    loadEducation();
+    loadResume();
+    loadMessages();
+  } else if (window.location.pathname.includes('login.html')) {
+    // If on login page, clear token
+    localStorage.removeItem('token');
+  } else {
+    // For the public-facing portfolio, ensure public data is loaded
+    loadProjects();
+    loadSkills();
+    loadCertifications();
+    loadEducation();
+    loadResumeButton();
+  }
 };
