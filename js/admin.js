@@ -993,7 +993,7 @@ function getAuthHeaders() {
 // 🚪 Logout
 function logout() {
   localStorage.removeItem("token");
-  window.location.href = "login.html";
+  window.location.href = "index.html";
 }
 
 // =========================================================
